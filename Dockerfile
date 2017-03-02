@@ -2,7 +2,7 @@ FROM buildpack-deps:xenial
 
 RUN apt-get update \
     && apt-get -y upgrade \
-    && apt-get -y install python-pip make build-essential curl openssl vim jq gettext \
+    && apt-get -y install python-pip make build-essential curl openssl vim jq gettext polipo \
     && rm -rf /var/lib/apt/lists/*
 
 ENV GO_VERSION 1.8
@@ -37,7 +37,8 @@ RUN git clone https://github.com/akesterson/shunit.git /tmp/shunit \
 WORKDIR /gopath/src/github.com/Azure/acs-engine
 
 # Cache vendor layer
-ADD Makefile test.mk versioning.mk glide.yaml glide.lock /gopath/src/github.com/Azure/acs-engine/
+#ADD Makefile test.mk versioning.mk glide.yaml glide.lock /gopath/src/github.com/Azure/acs-engine/
+ADD . /gopath/src/github.com/Azure/acs-engine
 RUN make bootstrap
 
 # https://github.com/dotnet/core/blob/master/release-notes/download-archives/2.0.0-preview2-download.md
@@ -46,4 +47,12 @@ RUN echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-releas
     && apt-get update \
     && apt-get -y install dotnet-sdk-2.0.0-preview2-006497
 
-ADD . /gopath/src/github.com/Azure/acs-engine
+RUN make build
+
+#RUN go get github.com/tools/godep
+#RUN sh -c 'curl https://glide.sh/get | sh'
+#RUN git clone https://github.com/heketi/heketi.git $GOPATH/src/github.com/heketi/heketi
+#RUN cd $GOPATH/src/github.com/heketi/heketi; make client
+#RUN cp $GOPATH/src/github.com/heketi/heketi/client/cli/go/heketi-cli /usr/bin/heketi-cli
+
+ENV PATH $PATH:/gopath/src/github.com/Azure/acs-engine/bin
