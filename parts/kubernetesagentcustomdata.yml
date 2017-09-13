@@ -148,6 +148,10 @@ write_files:
     {{WrapAsVariable "provisionScript"}}
 
 runcmd: 
+- echo dm_snapshot >> /etc/modules-load.d/modules.conf
+- echo dm_mirror >> /etc/modules-load.d/modules.conf
+- echo dm_thin_pool >> /etc/modules-load.d/modules.conf
+- systemctl restart systemd-modules-load.service
 - apt-mark hold walinuxagent{{GetKubernetesAgentPreprovisionYaml .}}
 - apt-get update
 - apt-get install -y apt-transport-https ca-certificates nfs-common
@@ -162,9 +166,6 @@ runcmd:
 - apt-get install -y ebtables
 - apt-get install -y docker-engine
 - systemctl restart docker
-- modprobe dm_snapshot
-- modprobe dm_mirror
-- modprobe dm_thin_pool
 - mkdir -p /etc/kubernetes/manifests
 - usermod -aG docker {{WrapAsVariable "username"}}
 - /usr/lib/apt/apt.systemd.daily
