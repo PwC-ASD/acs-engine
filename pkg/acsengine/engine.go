@@ -1487,9 +1487,9 @@ func getDataDisks(a *api.AgentPoolProfile) string {
               "createOption": "Empty",
               "diskSizeGB": "%d",
               "lun": %d,
-              "name": "[concat(variables('%sVMNamePrefix'), copyIndex(),'-datadisk%d')]",
+              "name": "[concat(variables('%sVMNamePrefix'), copyIndex(variables('%sOffset')),'-datadisk%d')]",
               "vhd": {
-                "uri": "[concat('http://',variables('storageAccountPrefixes')[mod(add(add(div(copyIndex(),variables('maxVMsPerStorageAccount')),variables('%sStorageAccountOffset')),variables('dataStorageAccountPrefixSeed')),variables('storageAccountPrefixesCount'))],variables('storageAccountPrefixes')[div(add(add(div(copyIndex(),variables('maxVMsPerStorageAccount')),variables('%sStorageAccountOffset')),variables('dataStorageAccountPrefixSeed')),variables('storageAccountPrefixesCount'))],variables('%sDataAccountName'),'.blob.core.windows.net/vhds/',variables('%sVMNamePrefix'),copyIndex(), '--datadisk%d.vhd')]"
+                "uri": "[concat('http://',variables('storageAccountPrefixes')[mod(add(add(div(copyIndex(variables('%sOffset')),variables('maxVMsPerStorageAccount')),variables('%sStorageAccountOffset')),variables('dataStorageAccountPrefixSeed')),variables('storageAccountPrefixesCount'))],variables('storageAccountPrefixes')[div(add(add(div(copyIndex(variables('%sOffset')),variables('maxVMsPerStorageAccount')),variables('%sStorageAccountOffset')),variables('dataStorageAccountPrefixSeed')),variables('storageAccountPrefixesCount'))],variables('%sDataAccountName'),'.blob.core.windows.net/vhds/',variables('%sVMNamePrefix'),copyIndex(variables('%sOffset')), '--datadisk%d.vhd')]"
               }
             }`
 	managedDataDisks := `            {
@@ -1502,7 +1502,7 @@ func getDataDisks(a *api.AgentPoolProfile) string {
 			buf.WriteString(",\n")
 		}
 		if a.StorageProfile == api.StorageAccount {
-			buf.WriteString(fmt.Sprintf(dataDisks, diskSize, i, a.Name, i, a.Name, a.Name, a.Name, a.Name, i))
+			buf.WriteString(fmt.Sprintf(dataDisks, diskSize, i, a.Name, a.Name, i, a.Name, a.Name, a.Name, a.Name, a.Name, a.Name, a.Name, i))
 		} else if a.StorageProfile == api.ManagedDisks {
 			buf.WriteString(fmt.Sprintf(managedDataDisks, diskSize, i))
 		}
