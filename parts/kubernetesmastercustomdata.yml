@@ -150,7 +150,7 @@ write_files:
   content: !!binary |
     MASTER_ADDON_AZURE_STORAGE_CLASSES_B64_GZIP_STR
 
-- path: /etc/kubernetes/addons/kube-tiller-deployment.yaml
+- path: /etc/kubernetes/addons-disable/kube-tiller-deployment.yaml
   permissions: "0644"
   encoding: gzip
   owner: "root"
